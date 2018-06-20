@@ -182,7 +182,7 @@ void boss::setDirection(char c)
 		if(direction=='r')
 			frame=0;
 		else
-			frame=9;
+			frame=4;
 	}
 }
 

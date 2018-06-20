@@ -21,11 +21,13 @@
 class game:public baseclass{
 	SDL_Joystick *joystick;
 	int joystickCount;
-	int buttonCount, count_end, count_animation;
-	SDL_Surface *screen, *background, *block, *ene, *ene2, *bos, *ite, *hud, *energy, *cloud1, *cloud2, *cloud3;
+	int buttonCount, count_end, count_animation, count_background, count_moving;
+	SDL_Surface *screen, *block, *ene, *ene2, *bos, *ite, *hud, *energy;
+	SDL_Surface *background;
+	SDL_Surface *bg1, *bg2, *bg3, *bg4, *bg5, *bg6, *bg7, *bg8, *bg9, *bg10;
 	SDL_Surface *energy_life, *numb, *m_screen, *press_start, *titan_logo, *game_over, *final_screen;
 	SDL_Surface  *n0, *n1, *n2, *n3, *n4, *n5, *n6, *n7, *n8, *n9;  
-	SDL_Rect camera, rect_bg, energy1, energy2, energy3, energy4, numb1, press_start1, rect_cloud1, rect_cloud2, rect_cloud3;
+	SDL_Rect camera, rect_bg, rect_bg2, rect_bg3, energy1, energy2, energy3, energy4, numb1, press_start1, rect_cloud1, rect_cloud2, rect_cloud3;
 	SDL_Rect clip_number[10];
 	std::vector<std::vector<int> > map;
 	std::vector<item*> items;

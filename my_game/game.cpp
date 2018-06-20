@@ -34,16 +34,20 @@ game::game()    //constructor
 	game_over  = load_image2("rd/images/menu/game_over.bmp");
 	final_screen = load_image2("rd/images/menu/final_screen.bmp");
 	block= load_image3("rd/images/blocks/blocks.bmp");
-	background=load_image2("rd/images/BG/BG.bmp");
+	bg1=load_image2("rd/images/BG/BG1.bmp");
+	bg2=load_image2("rd/images/BG/BG1.bmp");
+	bg3=load_image2("rd/images/BG/BG2.bmp");
+	bg4=load_image2("rd/images/BG/BG2.bmp");
+	/*bg5=load_image2("rd/images/BG/BG5.bmp");
+	bg6=load_image2("rd/images/BG/BG6.bmp");
+	bg7=load_image2("rd/images/BG/BG7.bmp");*/
+	background=bg2;
 	ite=load_image3("rd/images/itens/rings.bmp");
 	ene=load_image4("rd/images/enemy/enemy.bmp");
 	ene2=load_image4("rd/images/enemy/enemy2.bmp");
 	bos=load_image3("rd/images/boss/boss.bmp");
 	hud=load_image("rd/images/hud/HUD.bmp");
 	numb=load_image("rd/images/numbers/N3.bmp");
-	cloud1=load_image("rd/images/BG/CLOUDS.bmp");
-	cloud2=load_image("rd/images/BG/CLOUDS2.bmp");
-	cloud3=load_image("rd/images/BG/CLOUDS3.bmp");
 	sfx_enemies = snd_sfx_load("/rd/enemies.wav"); 
 	sfx_hurt = snd_sfx_load("/rd/death.wav"); 
 	sfx_ring = snd_sfx_load("/rd/ring.wav"); 
@@ -63,6 +67,7 @@ game::game()    //constructor
 	camera.x=0;
 	camera.y=0;
 	count_animation=0;
+	count_background=0;
 	///////////////
 	baseclass::coord.w=SCREEN_WIDTH;
 	///////////////
@@ -72,22 +77,19 @@ game::game()    //constructor
 	
 	rect_bg.w=SCREEN_WIDTH;
 	rect_bg.h=SCREEN_HEIGHT;
+	rect_bg2.w=SCREEN_WIDTH;
+	rect_bg2.h=SCREEN_HEIGHT;
+	rect_bg3.w=SCREEN_WIDTH;
+	rect_bg3.h=SCREEN_HEIGHT;
 		
-	rect_bg.x=0;
+	rect_bg.x=-320;
 	rect_bg.y=0;
+	rect_bg2.x=0;
+	rect_bg2.y=0;
+	rect_bg3.x=320;
+	rect_bg3.y=0;
 	
-	rect_cloud1.x=0;
-	rect_cloud1.y=0; 
-	rect_cloud1.w=320;
-	
-	rect_cloud2.x=-320; 
-	rect_cloud2.y=0; 
-	rect_cloud2.w=320;
-	
-	rect_cloud3.x=-820;
-	rect_cloud3.y=0;
-	rect_cloud3.w=320;
-		
+
     numb1.x=-25;
 	numb1.y=-2;
 	numb1.w=-16;
@@ -108,6 +110,7 @@ game::game()    //constructor
 	music_boss=false;
 	boss_defeated=false;
 	count_end=0;
+	count_moving=0;
 }
 
 ///// Destroy all the variables in the memory for the game.
@@ -140,47 +143,92 @@ game::~game()
 //// Function to control the bg (not using on this code)
 void game::control_bg(char d)
 {
-	if(d=='r')
+	if(count_moving>20)
 	{
-		rect_cloud1.x+=1;
-		rect_cloud2.x+=1;
-		rect_cloud3.x+=1;
-		rect_bg.x+=1;
+		if(d=='r')
+		{
+			rect_bg.x+=1;
+			rect_bg2.x+=1;
+			rect_bg3.x+=1;
+		}
+		else
+		{
+			rect_bg.x-=1;
+			rect_bg2.x-=1;
+			rect_bg3.x-=1;
+		}
+		
+		count_moving=0;
 	}
-	else
+
+	if(rect_bg.x<-320)
 	{
-		rect_bg.x-=1;
-		rect_cloud1.x-=1;
-		rect_cloud2.x-=1;
-		rect_cloud3.x-=1;
+		rect_bg.x=320;
+	}
+	
+	if(rect_bg2.x<-320)
+	{
+		rect_bg2.x=320;
+	}
+	
+	if(rect_bg3.x<-320)
+	{
+		rect_bg3.x=320;
+	}
+	
+	if(rect_bg.x>320)
+	{
+		rect_bg.x=-320;
+	}
+	
+	if(rect_bg2.x>320)
+	{
+		rect_bg2.x=-320;
+	}
+	
+	if(rect_bg3.x>320)
+	{
+		rect_bg3.x=-320;
 	}
 }
 
-//// Control animation for the clouds
+//// Control animation
 void game::control_animation()
 {
-	if(!player1->getMoving())
-	{
-		rect_cloud1.x+=1;
-		rect_cloud2.x+=1;
-		rect_cloud3.x+=1;		
-	}
+	count_background++;
 	
-	if(rect_cloud1.x>320)
+	switch(count_background)
 	{
-		rect_cloud1.x=-500;
+		case 1:
+			background = bg1;
+		break;
+		
+		case 2:
+			background = bg2;
+		break;
+		
+		case 3:
+			background = bg3;
+		break;
+		
+		case 4:
+			background = bg4;
+			count_background=0;
+		break;
+		
+		/*case 5:
+			background = bg5;
+		break;
+		
+		case 6:
+			background = bg6;
+		break;
+		
+		case 7:
+			background = bg6;
+			count_background=0;
+		break;*/
 	}
-	
-	if(rect_cloud2.x>320)
-	{
-		rect_cloud2.x=-500;
-	}
-	
-	if(rect_cloud3.x>320)
-	{
-		rect_cloud3.x=-500;
-	}
-	
 }
 
 ///////Function to load the images without black
@@ -783,9 +831,14 @@ void game::restart_game()
 	boss_defeated=false;
 	music_boss=false;
 	count_end=0;
+	count_moving=0;
 	running=false;
-	rect_bg.x=0;
+	rect_bg.x=-320;
 	rect_bg.y=0;
+	rect_bg2.x=0;
+	rect_bg2.y=0;
+	rect_bg3.x=320;
+	rect_bg3.y=0;
 	direction[0]=0;
 	direction[1]=0;
 	player1->setMoving(0);
@@ -813,7 +866,13 @@ void game::end_game()
 	baseclass::coord.x = 0;
 	baseclass::coord.y=0;
 	camera.x=0;
-	camera.y=0;		
+	camera.y=0;	
+	rect_bg.x=-320;
+	rect_bg.y=0;
+	rect_bg2.x=0;
+	rect_bg2.y=0;
+	rect_bg3.x=320;
+	rect_bg3.y=0;	
 	numb=n3;			
 	SDL_FillRect(screen,NULL, 0x000000); 
 	SDL_UpdateRect(screen, 0, 0, 0, 0);
@@ -1028,28 +1087,27 @@ void game::start()
 					}
 			}
 									 
-			//move everything
 			player1->move(map);
 			
-			start=SDL_GetTicks();
-			SDL_BlitSurface(background,&rect_bg,screen,NULL);	
-			
-			
+			count_moving++;
 			count_animation++;
 			
-			if(count_animation==10)
+			if(count_animation>5)
 			{
 				count_animation=0;
 				control_animation();
 			}
 			
-			SDL_BlitSurface(cloud1,&rect_cloud1,screen,NULL);
-			SDL_BlitSurface(cloud2,&rect_cloud2,screen,NULL);
-			SDL_BlitSurface(cloud3,&rect_cloud3,screen,NULL);	
+			start=SDL_GetTicks();
+			SDL_BlitSurface(background,&rect_bg,screen,NULL);	
+			SDL_BlitSurface(background,&rect_bg2,screen,NULL);	
+			SDL_BlitSurface(background,&rect_bg3,screen,NULL);	
 			
+									
 			showmap();
 
 			player1->show(screen);
+			
 
 			for(int i=0;i<enemies.size();i++)
 			{
@@ -1181,8 +1239,12 @@ void game::start()
 					music_boss=false;
 					count_end=0;
 					running=false;
-					rect_bg.x=0;
+					rect_bg.x=-320;
 					rect_bg.y=0;
+					rect_bg2.x=0;
+					rect_bg2.y=0;
+					rect_bg3.x=320;
+					rect_bg3.y=0;
 					direction[0]=0;
 					direction[1]=0;
 					player1->setMoving(0);
